@@ -121,7 +121,7 @@ function calculate(e, url) {
   });
 
   const totalWattHour = wattHourArray.reduce((acc, val) => acc + val, 0);
-  let readingPerMonth = Math.floor((totalWattHour / 1000) * 30).toString();
+  let readingPerMonth = Math.round((totalWattHour / 1000) * 30).toString();
   console.log(readingPerMonth);
 
   if (readingPerMonth === "0" || readingPerMonth === "NaN") {
