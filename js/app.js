@@ -67,8 +67,11 @@ function getUnits() {
 
   unitArrayValues.forEach(unitValue => {
     if (unitValue === "" || unitValue <= 0) {
-      alert("Units cannot be empty, zero or negative");
-      return;
+      if (!alert("Units cannot be empty, zero or negative")) {
+        window.location.reload();
+      }
+      //   alert("Units cannot be empty, zero or negative");
+      //   return;
     }
 
     units.push(unitValue);
@@ -82,8 +85,11 @@ function getHours() {
 
   hourArrayValues.forEach(hourValue => {
     if (hourValue === "" || hourValue <= 0 || hourValue > 24) {
-      alert("Hour cannot be empty and must be between 0 and 24");
-      return;
+      if (!alert("Hour cannot be empty and must be between 0 and 24")) {
+        window.location.reload();
+      }
+      //   alert("Hour cannot be empty and must be between 0 and 24");
+      //   return;
     }
 
     hours.push(hourValue);
