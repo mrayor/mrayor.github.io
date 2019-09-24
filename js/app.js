@@ -111,7 +111,7 @@ function getHours() {
 // }
 
 //Calculate Solar
-function calculate(e) {
+function calculate(e, url) {
   //call get hour and get unit functions
   getHours();
   getUnits();
@@ -145,4 +145,8 @@ function calculate(e) {
   hours = [];
 
   e.preventDefault();
+}
+
+function goto(url) {
+  window.location = url;
 }

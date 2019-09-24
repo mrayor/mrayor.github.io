@@ -18,8 +18,10 @@
   <body>
     <main class="main">
       <div class="main__left">
-        <div class="header"><h1 class="header__logo">KARMA</h1></div>
-        <div class="main__left-content">
+        <div class="header">
+          <h1 class="header__logo"><a href="/index.html">KARMA</a></h1>
+        </div>
+        <div class="main__left-content" id="navigate">
           <h1 class="header__primary">SOLAR <span>CALCULATOR</span></h1>
           <p class="header__secondary">
             Calculate the solar power you need in your home by inputting details
@@ -61,7 +63,12 @@
                 </div>
               </div>
             </form>
-            <button type="submit" class="primary__btn" id="calculate">
+            <button
+              type="submit"
+              class="primary__btn"
+              id="calculate"
+              onclick="goto('#navigate')"
+            >
               CALCULATE
             </button>
           </div>
