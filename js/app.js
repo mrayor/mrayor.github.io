@@ -1,16 +1,15 @@
 // Define UI Variables
+const dropdown = document.querySelector(".appliance-dropdown");
 const addApplianceButton = document.querySelector("#add-appliance");
 const form = document.querySelector("#calc-form");
 const resetButton = document.querySelector("#reset");
 const calculateButton = document.querySelector("#calculate");
-const result = document.querySelector(".main__left");
+const result = document.querySelector(".main__left-content");
 
-//Global Declarations
-let units = [];
-let hours = [];
-// console.log(unitValues);
-//Event Listeners
+//api
+const apiUrl = "https://json-server-hng.herokuapp.com/db";
 
+//load event listeners
 loadEventListeners();
 function loadEventListeners() {
   addApplianceButton.addEventListener("click", addAppliance);
@@ -19,32 +18,173 @@ function loadEventListeners() {
   calculateButton.addEventListener("click", calculate);
 }
 
-function addAppliance(e) {
-  //markup for forms
-  let markUp = `<div class="column ">
+//fetch data from api
+const fetchData = async () => {
+  let response = await fetch(apiUrl);
+  let data = await response.json();
+  return data;
+};
+
+//dropdown
+
+dropdown.length = 0;
+
+let defaultOption = document.createElement("option");
+defaultOption.text = "Choose Appliance";
+
+dropdown.add(defaultOption);
+dropdown.selectedIndex = 0;
+
+const init = async () => {
+  let appliancesObject = await fetchData();
+  const { appliances } = appliancesObject;
+  let option;
+  for (let i = 0; i < appliances.length; i++) {
+    option = document.createElement("option");
+    option.text = appliances[i].name;
+    option.value = appliances[i].id;
+    dropdown.add(option);
+  }
+};
+init();
+
+$(document).ready(function() {
+  $("select").select2({
+    width: "resolve",
+    templateSelection: formatState
+  });
+  $("select").on("select2:select", async e => {
+    let applianceData = await fetchData();
+    const { appliances } = applianceData;
+    let applianceArray = Array.from(appliances);
+    let data = e.params.data;
+    const getappliance = applianceArray.find(
+      appliance => appliance.name === data.text
+    );
+    document.querySelector("[name=quantity]").value = 1;
+    document.querySelector("[name=unit]").value = getappliance.units;
+    document.querySelector("[name=hour]").value = 1;
+  });
+});
+
+function formatState(state) {
+  if (!state.id) {
+    return state.text;
+  }
+  let $state = $("<span><span></span></span>");
+  $state.find("span").text(state.text);
+  return $state;
+}
+
+//set counters and increment function
+let a = 0,
+  b = 0,
+  c = 0;
+function incrementCount() {
+  a++;
+  b++;
+  c++;
+}
+
+async function addAppliance(e) {
+  e.preventDefault();
+
+  incrementCount();
+  let div = document.createElement("div");
+  div.className = "row";
+
+  let dropdown = document.querySelector(".appliance-dropdown");
+
+  let defaultOption = document.createElement("option");
+  defaultOption.text = "Choose Appliance";
+
+  let data = await fetchData();
+  const { appliances } = data;
+  let option;
+  for (let i = 0; i < appliances.length; i++) {
+    option = document.createElement("option");
+    option.text = appliances[i].name;
+    option.value = appliances[i].id;
+    dropdown.add(option);
+  }
+
+  form.insertAdjacentHTML(
+    "beforeend",
+
+    `<div class="row">
+    <div class="column">
                   <label for="name">Appliance Name</label>
-                  <input type="text" name="name" id="" required />
-                </div>
-                <div class="column unit-field">
-                  <label for="unit">Unit Watt</label>
-                  <input type="number" name="unit" id="" required />
-                </div>
-                <div class="column hour-field">
-                  <label for="hours">Number of Hours</label>
-                  <input type="number" name="hour" id="" required />
+                  
+
+                  <select class="input appliance-dropdown test${a}" name="appliance">
+                  ${Object.keys(dropdown).map(
+                    value =>
+                      `<option value="${value}">${dropdown[value].text}</option>`
+                  )}
+                  </select>
                 </div>
                 <div class="column">
+                  <label for="quantity">Quantity</label>
+                  <input
+                    class="input"
+                    type="number"
+                    name="quantity${a}"
+                    data-name="quantity"
+                    id=""
+                    required
+                  />
+                </div>
+                <div class="column">
+                  <label for="unit">Unit Watt</label>
+                  <input
+                    class="input"
+                    type="number"
+                    name="unit${b}"
+                    data-name="unit"
+                    id=""
+                    required
+                  />
+                </div>
+                <div class="column">
+                  <label for="hours">Number of Hours</label>
+                  <input
+                    class="input"
+                    class="number"
+                    type="number"
+                    name="hour${c}"
+                    data-name="hour"
+                    id=""
+                    required
+                  />
+                </div>
+                <div class="column ">
                   <label for="">&nbsp;</label>
                   <a href="#" class="delete" id="clear"
                     ><i class="fas fa-minus-circle fa-2x m-t-small"></i
                   ></a>
-                </div>`;
-  //create div
-  let div = document.createElement("div");
-  div.className = "row";
-  div.innerHTML = markUp;
-  form.appendChild(div);
-  e.preventDefault();
+                </div>
+                </div>`
+  );
+
+  $(document).ready(function() {
+    $(".test" + a).select2({
+      width: "resolve",
+      templateSelection: formatState,
+      style: "width: 100%"
+    });
+    $(".test" + a).on("select2:select", async e => {
+      let applianceData = await fetchData();
+      const { appliances } = applianceData;
+      let applianceArray = Array.from(appliances);
+      let data = e.params.data;
+      const getappliance = applianceArray.find(
+        appliance => appliance.name === data.text
+      );
+      document.querySelector(`[name=quantity${a}]`).value = 1;
+      document.querySelector(`[name=unit${b}]`).value = getappliance.units;
+      document.querySelector(`[name=hour${c}]`).value = 1;
+    });
+  });
 }
 
 //Remove Appliance
@@ -54,97 +194,86 @@ function removeAppliance(e) {
   }
 }
 
-//Clear
+//Reset
 function reset() {
   window.location.href = "index.html";
 }
 
+//get units
 function getUnits() {
-  //get units
-
-  const unitValues = Array.from(document.querySelectorAll('[name="unit"]'));
+  const unitValues = Array.from(
+    document.querySelectorAll('[data-name="unit"]')
+  );
   let unitArrayValues = unitValues.map(unitValue => unitValue.value);
-
-  unitArrayValues.forEach(unitValue => {
-    if (unitValue === "" || unitValue <= 0) {
-      if (!alert("Units cannot be empty, zero or negative")) {
-        window.location.reload();
-      }
-      //   alert("Units cannot be empty, zero or negative");
-      //   return;
+  unitArrayValues.forEach(val => {
+    if (val < 0) {
+      throw alert("Units value cannot be negative");
     }
-
-    units.push(unitValue);
-    console.log(units);
-    unitValue = "";
   });
+  return unitArrayValues;
 }
+//get qty
+function getQty() {
+  const qtyValues = Array.from(
+    document.querySelectorAll('[data-name="quantity"]')
+  );
+  let qtyArrayValues = qtyValues.map(qtyValue => qtyValue.value);
+  qtyArrayValues.forEach(val => {
+    if (val < 0) {
+      throw alert("Quantity value cannot be negative");
+    }
+  });
+  return qtyArrayValues;
+}
+//get hrs
 function getHours() {
-  const hourValues = Array.from(document.querySelectorAll('[name ="hour"]'));
+  const hourValues = Array.from(
+    document.querySelectorAll('[data-name="hour"]')
+  );
   let hourArrayValues = hourValues.map(hourValue => hourValue.value);
-
-  hourArrayValues.forEach(hourValue => {
-    if (hourValue === "" || hourValue <= 0 || hourValue > 24) {
-      if (!alert("Hour cannot be empty and must be between 0 and 24")) {
-        window.location.reload();
-      }
-      //   alert("Hour cannot be empty and must be between 0 and 24");
-      //   return;
+  hourArrayValues.forEach(val => {
+    if (val < 0 || val > 24) {
+      throw alert("Hours must be between 1 and 24");
     }
-
-    hours.push(hourValue);
-    hourValue = "";
   });
+  return hourArrayValues;
 }
-
-// function resetAppliance() {
-//   //reset appliance name
-//   const applianceNames = Array.from(document.querySelectorAll('[name="name"]'));
-//   let applianceArrayNames = applianceNames.map(
-//     applianceName => applianceName.value
-//   );
-
-//   applianceArrayNames.forEach(nameValue => {
-
-//     nameValue = "";
-//   });
-// }
 
 //Calculate Solar
-function calculate(e, url) {
-  //call get hour and get unit functions
-  getHours();
-  getUnits();
-  //get watt hour array
+function calculate(e) {
+  e.preventDefault();
+  let units = getUnits();
+  let qty = getQty();
+  let hours = getHours();
+
+  //get total watthour array
   const wattHourArray = units.map(function(unit, index) {
-    return hours[index] * unit;
+    return qty[index] * hours[index] * unit;
   });
 
   const totalWattHour = wattHourArray.reduce((acc, val) => acc + val, 0);
   let readingPerMonth = Math.round((totalWattHour / 1000) * 30).toString();
-  console.log(readingPerMonth);
 
   if (readingPerMonth === "0" || readingPerMonth === "NaN") {
-    readingPerMonth = "";
+    let markUp = `<h1 class="header__primary">Please Select an <span> Appliance</span></h1>`;
+    let div = document.createElement("div");
+    result.innerHTML = "";
+    div.innerHTML = markUp;
+    result.appendChild(div);
     return;
   }
+
   //diplay in the ui
-  let markUp = `<div class="header"><h1 class="header__logo">KARMA</h1></div>
-                <div class="main__left-content">
-                <h1 class="header__primary">Your result is <span>${readingPerMonth} kwh</span></h1>
-                <p class="header__secondary">
-                     per month
-                 </p>
-                
-                </div>`;
+  let markUp = `
+                 <h1 class="header__primary">Your result is <span>${readingPerMonth} kwh</span></h1>
+                 <p class="header__secondary">
+                      per month
+                  </p>
+               `;
   let div = document.createElement("div");
   result.innerHTML = "";
   div.innerHTML = markUp;
   result.appendChild(div);
-  units = [];
-  hours = [];
-
-  e.preventDefault();
 }
 
 function goto(url) {

@@ -16,65 +16,20 @@
     <title>Karma - Solar Calculator</title>
   </head>
   <body>
-    <main class="main">
-      <div class="main__left">
-        <div class="header">
-          <h1 class="header__logo"><a href="/index.html">KARMA</a></h1>
-        </div>
-        <div class="main__left-content" id="navigate">
-          <h1 class="header__primary">SOLAR <span>CALCULATOR</span></h1>
-          <p class="header__secondary">
-            Calculate the solar power you need in your home by inputting details
-            and get detailed power consumption estimates
-          </p>
-        </div>
-      </div>
-      <div class="main__right">
-        <div class="container">
-          <div class="main__buttons m-b-30">
-            <button class="secondary__btn" id="add-appliance">
-              <i class="fas fa-plus-circle m-r-5"></i>Add Appliance
-            </button>
-            <button class="secondary__btn" id="reset">
-              <i class="fas fa-sync-alt m-r-5"></i>Reset
-            </button>
-          </div>
+    <header class="landing-page">
+      <h1 class="header__logo">
+        <a href="/index.html"><img src="./img/logo.svg" alt="logo"/></a>
+      </h1>
+      <div class="content-center">
+        <h1 class="header__primary">Welcome To Karma</h1>
+        <p class="header__secondary">
+          Easily calculate the solar power you need in your home without stress
+        </p>
 
-          <div class="form">
-            <form action="" id="calc-form">
-              <div class="row">
-                <div class="column">
-                  <label for="name">Appliance Name</label>
-                  <input type="text" name="name" id="" required />
-                </div>
-                <div class="column">
-                  <label for="unit">Unit Watt</label>
-                  <input type="number" name="unit" id="" required />
-                </div>
-                <div class="column">
-                  <label for="hours">Number of Hours</label>
-                  <input type="number" name="hour" id="" required />
-                </div>
-                <div class="column ">
-                  <label for="">&nbsp;</label>
-                  <a href="#" class="delete" id="clear"
-                    ><i class="fas fa-minus-circle fa-2x m-t-small hidden"></i
-                  ></a>
-                </div>
-              </div>
-            </form>
-            <button
-              type="submit"
-              class="primary__btn"
-              id="calculate"
-              onclick="goto('#navigate')"
-            >
-              CALCULATE
-            </button>
-          </div>
-        </div>
+        <a href="./calculator/index.html" class="primary__btn">Get Started</a>
+
+  
       </div>
-    </main>
+    </header>
   </body>
-  <script src="./js/app.js"></script>
 </html>
