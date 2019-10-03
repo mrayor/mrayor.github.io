@@ -185,6 +185,8 @@ async function addAppliance(e) {
       document.querySelector(`[name=hour${c}]`).value = 1;
     });
   });
+  window.scrollTo(0, document.body.scrollHeight);
+
 }
 
 //Remove Appliance
